@@ -1,0 +1,161 @@
+DATE: 20/02/2019
+2) HttpServlet:
+	HTTP server is protocol dependent and used for HTTP protocol
+Syntax: public abstract class httpservlet extends generic servlet{}
+Package to be import: javax.servlet.http.*;
+
+Life cycle of HttpServlet:
+	1) init method - optional methos used for initialisation purpose and invoke first and only once in the life cycle of the program
+	2) doGet() / doPost() / doPut() / doDelete() / doOption() / doTrace() / service() - mandatory method to write bussiness logic
+	3) destroy method - optional method
+Differnece between doGet() || doPost()
+1) HTML program without method attribute or no HTML program then by default it is get request, we write logic in doGet() method || we should have a HTML program with method equal to post then it is post request, we write logic inside doPost()
+2) In get request the parameter are transferred in the URL between ? and & i.e query string || In post request the paramameter are transfer from directly from one page to another through headers
+3) The get request transfers only 2GB of data so it is used for fetching purpose || Post request transfers unlimited data so it is used for storing purpose
+
+Syntax: public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException,IOException{}
+	public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException,IOException{}
+
+javax.servlet.http.*;
+1) Interfaces:
+	> HttpServletRequest interface
+		Used to read data from client request
+		Syntax: public interface HttpServletRequest extends ServletRequest{}
+		Methods:
+			String getParameter(String name) - Used to take a single value from HTML program to a servlet program
+			Enumeration getParameterNames() - Used only for dipalying all the parameters from HTML to servlet program at a time
+			String[] getParameterValues(String name) - If a single control takes multiple values exmaple checkbox
+			String getScheme() - Retruns the name of the protocol example http, ftp etc,.
+			String getProtocol() - Returns the name and version of the protocol
+			String etContextPath() - Returns the project name
+			String getServletPath() - Returns the URL pattern of the servlet
+			String getPathInfo() - Returns any path that is located after the servlet path before the query string
+			String getRequestURI() - Returns contextPath plus servletPath plus pathinfo
+			String getQueryString() - Returns the string between ? and &
+			String getServerName() - Returns name of the server
+			int getServerPort() - Returns the port number of the server
+	> RequestDispatcher interface
+		Used to dispatch the request to another resources like HTML or JSP or another Servlet
+		Syntax: RequestDispatcher rd = req.getRequestDispatcher("HTML/JSP/Servlet");
+		Methods:
+			rd.forward(req,res) - Used to forward from one page to another page and does not return back to the calling page, the redirection take place on the server side so as a client we can't see anything in the URL to 					      which page it is redirected, used to access the resources within the project
+			rd.include(req,res) - Used to include the output of another resources like HTML/JSP/another Servlet and return baack to the calling program
+			response.sendRedirect("HTML/JSP/another Servlet") -  Used only to redirect from one page to another like HTML or JSP, Redirection take palce on the client side so we can see in the URL to which page it was 									     redirected, access the resources outside the project also.
+
+
+Program part:
+response.setContentType("text/html"); - to write HTML tag in servlet program *mandatory line
+PrintWriter pw=response.getWriter(); - to print in browser
+
+Servlet program has to be configured inside web.xml
+To configure in web.xml
+  <servlet>
+  <servlet-name>FirstServlet</servlet-name>
+  <servlet-class>com.pack.FirstServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>FirstServlet</servlet-name>
+  <url-pattern>/FirstServlet</url-pattern>
+  </servlet-mapping>
+
+Servlet can be configured in web.xml or using a annotation (use web.xml mostly)
+
+Program flow: <servlet-mapping> - <url-pattern>/FirstServlet</url-pattern> - <servlet-name>FirstServlet</servlet-name> - </servlet-mapping> - <servlet> - <servlet-name>FirstServlet</servlet-name> - <servlet-class>com.pack.FirstServlet</servlet-class> - </servlet>
+
+Web address: http://localhost:8080/ProjectName/ServletName
+
+String getMethod() -  Returns the type of method i.e GET/ POST
+
+Attribute method: Used to send the values in the background without end user information
+	Four Methods:
+		void setAttribute(String name,Object value)
+		Object getAttribute(String name)
+		Enumeration getAttributeNames()
+		void removeAttribute(String name)
+	Three Object:
+		Request object - If we set an attribute using request object, it can be accessible only to which page the request is transfer
+		Context object - If we set an attribute using context object, it can be accessed thorughout the application
+		Session object - If we set an attribute using session object, it can be accessible only in the page which is participated in the session
+
+Headers:
+	Whenever a client gives a client gives a request to server certain default info will be transferred cleirnt and server, those default information are called headers
+	Certain header take string as a value, int as a value and date as a value
+	Method:
+		String getHeader(String headerName) - Returns a single header with string as a value.
+		int getIntHeader(String headerName) - Retruns a single header with int as a value.
+		long getDateHeader(Sting headerName) - Returns a sinlge header with date as a value.
+		Enumeration getHeaderNames() - Display all headers at a time
+		Enumeration getHeaders(String headerName) - Use if single header contains multiple values
+	The different Headers are:
+		Accept - the file type the brower accepts example text/html
+		Accept-language - the type of langugae the browser the browser accept example en-us
+		Accept-charSet - the type of character set the browser accept example ISO-8859-1
+		Accept-encoding - the encoding technique the browser uses like G-zip, browser knows how to decode
+		Host - Name and port number of server
+		User-agent - the type of browser the client uses
+		Content-length - for post request the length of content
+		Refersh - when the page be refresh
+
+	Cookie[] getCookie() - Used to retrive the cookie information
+	HttpSession getSession() - 
+	HttpSession getSession(boolean on)
+	boolean isRequestedSessionFromCookie()
+	boolean isRequestedSessionIdFormUrl()
+	boolean isRequestedSessionIdIsValid()
+
+HttpServletResponse interface - Used to write data to the client request
+Syntax: public interface HttpServletResponse extends ServletResponse{}
+Methods:
+	void setContentType(String type) - Used to mention that the servlet has HTML code
+	PrintWriter getWriter() throws IOException - Used to print the output in the form of character
+	ServletOutputStream getOutputStream() throws IOException
+	void addCookie(Cookie c)
+	void sendRedirect(String url)
+	void encodeUrl(String url) - Used to send session ID in the URL
+	void setHeader(String headerName,String value)
+	void setIntHeader(String headerName,int value)
+	void setDateHeader(String headerName,long value)
+
+SingleThreadMoel interface - By default all servlet are multithreaded, if we want the servlet program to accept only one request at a time we implement single thread model interface which is a marker interface means it does not have any methods example public class sample servlet extends HttpServlet implements SingleThreadModel{}
+
+Cookie class - Cookies are the temporary storage of internet files which contains name path domain age and session ID of the webpage
+Constructor:
+	Cookie() -  Default constructor
+	Cookie(String name, String value)
+Methods:
+	void setDomain(String domain)
+	String getDomain()
+	void setPath(String path)
+	String getPath()
+	void setMaxAge(int age)
+	int getMaxAge()
+	void setName(String name)
+	String getName()
+	void setValue(String value)
+	String getValue()
+	void setSecure(boolean on)
+	boolean isSecure()
+
+To create a cookie:
+	Create a object for cookie class
+	Add a cookie at the time of response using addCookie()
+	Retrive the cookie using getCookies() method
+
+
+ServletConfig inteface
+	Used to access the initialization parameter configure in web.xml using <init-param>
+	Initialization parameters can be accessd only by a particular servlet 
+	ServletConfig sc=getServletConfig();
+Methods:
+	String getInit(String name) -  Returns a single initialization parameter
+	Enumuration getInitParameterNames()
+
+ServletContext interface -  Used to access the application parameter in a servlet and configure only in web.xml using <context-param>, application parameters are parameters that can be accessed throughout the application.
+	ServletContext sc=getServletContext();
+Methods:
+	String getInitParameter(String name)
+	Enumeration getInitParameterNames()
+	void setAttribute(String name, Object value)
+	Object getAttribute(String name)
+	void removeAttribute(String name)
+	Enumeration getAttributeNames()
